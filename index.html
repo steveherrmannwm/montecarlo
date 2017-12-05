@@ -2,11 +2,19 @@
 	<head>
 		<title>Monte Carlo Method</title>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script src="includes/nerdamer/nerdamer.core.js"></script> <!-- assuming you've saved the file in the root of course -->
+		<!-- LOAD ADD-ONS -->
+		<script src="includes/nerdamer/Algebra.js"></script>
+		<script src="includes/nerdamer/Calculus.js"></script>
+		<script src="includes/nerdamer/Solve.js"></script>
+		<script src="includes/nerdamer/Extra.js"></script>
 		<script type="text/javascript">
 			var math_api = "";			
 			function montecarlo(){	
 				var eq = document.getElementsByName("equation")[0].value;
-				console.log(eq);
+				var parsed = nerdamer(eq);
+				console.log(parsed.text());
+				console.log(parsed.variables());
 			}
 		</script>
 	</head>
