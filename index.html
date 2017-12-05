@@ -2,6 +2,11 @@
 	<head>
 		<title>Monte Carlo Method</title>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script type="text/javascript">
+			function montecarlo(){
+				alert("MONTECARLO CALLED");
+			}
+		</script>
 	</head>
 	<body>
 		<h1>Monte Carlo Method</h1>
@@ -12,7 +17,7 @@
 			<label>Equation:
 				<input type="text" name="equation"/>
 			</label>
-			<input type="button" name="run_sim" value="Run Simulation"/>
+			<input type="button" name="run_sim" value="Run Simulation" onclick="montecarlo()"/>
 		</div>
 	</body>
 </html>
