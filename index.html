@@ -3,8 +3,9 @@
 		<title>Monte Carlo Method</title>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 		<script type="text/javascript">
+			var math_api = "";
 			function montecarlo(){	
-				alert("MONTECARLO CALLED");
+				
 			}
 		</script>
 	</head>
@@ -16,6 +17,9 @@
 		<div id="inputs">
 			<label>Equation:
 				<input type="text" name="equation"/>
+			</label>
+			<label>Iterations
+				<input type="text" name="iterations"/>
 			</label>
 			<input type="button" name="run_sim" value="Run Simulation" onclick="montecarlo()"/>
 		</div>
