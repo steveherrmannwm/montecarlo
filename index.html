@@ -108,8 +108,19 @@
 		</script>
 	</head>
 	<body>
-		<h1>Monte Carlo Method</h1>
-		<p>About the Method</p>
+		<h1>Background</h1>
+
+		<p>Monte Carlo methods are statistical tools used in forecasting events or approximating values that may be fixed. More specifically, Monte Carlo methods actually refer to a class of processes: ranging from financial predictions to estimating integrals. </p>
+
+		<p>The first instance of a Monte Carlo method is dated in the eighteenth century. Georges Louis LeClerc who was a French scientist. Specifically, LeClerc proved that if given a lined background and a needle the length of the distance between the lines, then the probability of the needle intersecting a line when randomly tossed onto the background is 2/π. Get this, he literally tested this by tossing baguettes over his shoulder onto a tiled floor. Here is a site to visit so you can do a very similar needle simulation! (https://mste.illinois.edu/activity/buffon/). </p>
+
+		<p>Later, in the late nineteenth and early twentieth centuries, Monte Carlo simulations started being used to study problems that are considered intractable (take a looooooooooooooooooooooong time to compute): for example, galaxy formation modeling. Early simulations dealt with previously understood deterministic problems. Modern simulation now inverts the process, treating deterministic problems by first finding a probabilistic analog and solving the problem probabilistically. </p>
+
+		<p>The modern form of Monte Carlo simulations were first developed and used during the Manhattan Project. Specifically, John von Neumann and Stanislaw Ulam suggested Monte Carlo simulations for investigating properties of neutron travel through radiation shielding and actually gave Monte Carlo simulations their name “Monte Carlo.” </p>
+
+		<h1>Concept of Our Simulation</h1>
+		<p>Our simulator is implementing Example 2.2 from page 42 of our probability book. Meaning, essentially what we do is trap portions of the function inside of a box, then randomly select points from within the box see if they falls below or above the function. This is done by selecting a point (x,y) along two intervals (the range of x-values for the box and the range of y-values for the box). We select an x-value from the x-interval and we select a value from the y-interval, then we evaluate the function, f, at the randomly selected x and see if f(x) is less than or equal to the randomly selected y-value. We then iterate this as many times as we’d like (in theory we’d use an infinite amount of points) while keeping track of the number of points that fell below or on the function. After our set amount of iterations, we divide the number of points that fell below or on the function by the number of iterations, thus giving us the probability of falling under the function in our given area, which is the area of the function, thus giving us an approximate value of our integral! Give it a try with the simulator!!! </p>
+
 		<h2>The Simulation</h2>
 		<div><canvas id="drawing" width="500" height="250" style="border:1px solid black"></canvas></div>
 		<div id="inputs">
