@@ -1,7 +1,6 @@
 <html>
 	<head>
 		<title>Monte Carlo Method</title>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 		<script src="includes/nerdamer/nerdamer.core.js"></script> <!-- assuming you've saved the file in the root of course -->
 		<!-- LOAD ADD-ONS -->
 		<script src="includes/nerdamer/Algebra.js"></script>
@@ -9,20 +8,110 @@
 		<script src="includes/nerdamer/Solve.js"></script>
 		<script src="includes/nerdamer/Extra.js"></script>
 		<script type="text/javascript">
-			var math_api = "";			
-			function montecarlo(){	
-				var eq = document.getElementsByName("equation")[0].value;
-				var parsed = nerdamer(eq);
-				console.log(parsed.text());
-				console.log(parsed.variables());
+		function montecarlo(){
+			var eq = document.getElementsByName("equation")[0].value;
+			var parsed = nerdamer(eq);
+			var min_x = nerdamer(document.getElementsByName("min_x")[0].value).evaluate().text();
+			var max_x = nerdamer(document.getElementsByName("max_x")[0].value).evaluate().text();
+					
+			var min_y = 0;
+			var max_y = nerdamer(document.getElementsByName("max_y")[0].value).evaluate().text();
+			if(parsed.variables().length <= 1){
+				var variable = null;
+				// only set this variable if 
+				if(parsed.variables().length == 1){
+					variable = parsed.variables()[0];
+				}
+				drawFunction(parsed, min_x, max_x, min_y, max_y, variable);
+				var iterations = document.getElementsByName("iterations")[0].value;
+				/* Generate (x, y), and run x thru the function, and compare if f(x) < y */
+				var inside_count = 0;
+				for(var i = 0; i < iterations; i++){						
+					// TODO: Check if mins and maxs are positive
+					var x1 = (Math.random() * max_x) - min_x;
+					var y1 = (Math.random() * max_y) - min_y;
+				
+					var input = {};
+					input[variable] = x1;
+					var y2 = nerdamer(eq, input).evaluate();
+					if(y2.text() > y1)
+					{
+						inside_count++;
+						drawPoint(x1, y1, min_x, max_x, min_y, max_y, true);
+					}
+					else{
+						drawPoint(x1, y1, min_x, max_x, min_y, max_y, false);
+					}
+				}
+				var area = (max_x - min_x) * (max_y - min_y);
+				console.log("AREA:"+area);
+				console.log(inside_count);
+				var percentage = inside_count/iterations;
+				console.log("PERCENTAGE:"+percentage);
+				var estimate = percentage * area;
+				console.log("ESTIMATE ="+estimate);
 			}
+			else{
+				alert("Invalid function, functions must be of at most 1 variable");
+			}
+			
+			
+		}
+		
+		function drawFunction(func, min_x, max_x, min_y, max_y, variable){
+			var canvas = document.getElementById("drawing");
+			var context = canvas.getContext('2d');
+			var tag_height = canvas.height;
+			var tag_width = canvas.width;
+			context.fillStyle="white";
+			context.fillRect(0,0, tag_width, tag_height);
+			var height = tag_height/(max_y - min_y);
+			var width = tag_width/(max_x - min_x);
+			
+			context.beginPath();
+			var input = {};
+			if(variable != null){
+				input[variable] = min_x;
+			}
+			context.moveTo(0, (tag_height - func.evaluate(input) * tag_height));
+			console.log(func);
+			// 5000 chosen arbitrarily as enough to reasonably draw the function
+			var iterations = 5000;
+			for(var i = 0; i < iterations; i++){
+				var input = {};
+				var current_x = (min_x + max_x * i/iterations);
+				input[variable] = current_x;
+				var result = func.evaluate(input);
+				context.lineTo(current_x * width, tag_height - result * height); 
+			}
+			context.lineWidth = 2;
+			context.strokeStyle = "blue";
+			context.stroke();
+			
+		}
+		
+		function drawPoint(x, y, min_x, max_x, min_y, max_y, inside){
+			var canvas = document.getElementById("drawing");
+			var context = canvas.getContext('2d');
+			var tag_height = canvas.height;
+			var tag_width = canvas.width;
+			
+			var height = tag_height/(max_y - min_y);
+			var width = tag_width/(max_x - min_x);
+			context.fillStyle = "red";
+			if(inside){
+				context.fillStyle = "green";
+			}
+			context.fillRect(x * width, tag_height - y * height, 2, 2);
+			
+		}
 		</script>
 	</head>
 	<body>
 		<h1>Monte Carlo Method</h1>
 		<p>About the Method</p>
 		<h2>The Simulation</h2>
-		<div><canvas width="500" height="250"></canvas></div>
+		<div><canvas id="drawing" width="500" height="250" style="border:1px solid black"></canvas></div>
 		<div id="inputs">
 			<label>Equation:
 				<input type="text" name="equation"/>				
@@ -30,7 +119,21 @@
 			<label>Iterations
 				<input type="text" name="iterations"/>
 			</label>
+			<br />
+			<label>Min X:
+				<input type="text" name="min_x"/>
+			</label>
+			<label>Max X:
+				<input type="text" name="max_x"/>
+			</label>
+			<br />
+			<label>Max Y:
+				<input type="text" name="max_y"/>
+			</label>			
 			<input type="button" name="run_sim" value="Run Simulation" onclick="montecarlo()"/>
+			
+			<div id="errors"></div>
 		</div>
 	</body>
 </html>
+	
