@@ -64,12 +64,11 @@
 				console.log("PERCENTAGE:"+percentage);
 				var estimate = percentage * area;
 				console.log("ESTIMATE ="+estimate);
+				document.getElementById("estimates").innerHTML = estimate;
 			}
 			else{
 				alert("Invalid function, functions must be of at most 1 variable");
 			}
-
-			document.getElementById("estimates").innerhtml = estimate;
 			
 		}
 		
@@ -160,8 +159,7 @@
 			</label>			
 			<input type="button" name="run_sim" value="Run Simulation" onclick="montecarlo()"/>
 			<br />
-			</label>Probability:
-					<input type="text" name="max_y"/>
+			<div id="estimates"></div>
 
 			<div id="errors"></div>
 		</div>
