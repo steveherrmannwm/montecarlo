@@ -16,6 +16,13 @@
 					
 			var min_y = 0;
 			var max_y = parseFloat(nerdamer(document.getElementsByName("max_y")[0].value).evaluate().text());
+			
+			// Check that we can make an all positive box out of this thing
+			if(min_x < 0 || max_x < min_x || max_y < 0){
+				alert("Invalid box given, arguments must form a box with no negative edges");
+				return;
+			}
+			
 			if(parsed.variables().length <= 1){
 				var variable = null;
 				// only set this variable if 
