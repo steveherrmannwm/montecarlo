@@ -68,7 +68,8 @@
 			else{
 				alert("Invalid function, functions must be of at most 1 variable");
 			}
-			
+
+			document.getElementById("estimates").innerhtml = estimate;
 			
 		}
 		
@@ -158,7 +159,10 @@
 				<input type="text" name="max_y"/>
 			</label>			
 			<input type="button" name="run_sim" value="Run Simulation" onclick="montecarlo()"/>
-			
+			<br />
+			</label>Probability:
+					<input type="text" name="max_y"/>
+
 			<div id="errors"></div>
 		</div>
 	</body>
