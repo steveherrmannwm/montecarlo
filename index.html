@@ -41,14 +41,20 @@
 					var y1 = (Math.random() * yrange) + min_y;
 					var input = {};
 					input[variable] = x1;
-					var y2 = nerdamer(eq, input).evaluate();					
-					if(y2.text() > y1)
+					var y2 = nerdamer(eq, input).evaluate();
+					if(y2 < 0)
 					{
-						inside_count++;
-						drawPoint(x1, y1, min_x, max_x, min_y, max_y, true);
+						alert("This function goes negative, currently unimplemented");
 					}
 					else{
-						drawPoint(x1, y1, min_x, max_x, min_y, max_y, false);
+						if(y2.text() > y1)
+						{
+							inside_count++;
+							drawPoint(x1, y1, min_x, max_x, min_y, max_y, true);
+						}
+						else{
+							drawPoint(x1, y1, min_x, max_x, min_y, max_y, false);
+						}
 					}
 				}
 				var area = (max_x - min_x) * (max_y - min_y);
@@ -91,7 +97,6 @@
 				var result = func.evaluate(input);
 				
 				var canvas_x = (current_x - min_x) * width;
-				console.log("CANVAS_X:"+canvas_x);
 				context.lineTo(canvas_x, tag_height - result * height); 
 			}
 			context.lineWidth = 2;
