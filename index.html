@@ -1,18 +1,168 @@
 <html>
 	<head>
 		<title>Monte Carlo Method</title>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script src="includes/nerdamer/nerdamer.core.js"></script> <!-- assuming you've saved the file in the root of course -->
+		<!-- LOAD ADD-ONS -->
+		<script src="includes/nerdamer/Algebra.js"></script>
+		<script src="includes/nerdamer/Calculus.js"></script>
+		<script src="includes/nerdamer/Solve.js"></script>
+		<script src="includes/nerdamer/Extra.js"></script>
+		<script type="text/javascript">
+		function montecarlo(){
+			var eq = document.getElementsByName("equation")[0].value;
+			var parsed = nerdamer(eq);
+			var min_x = parseFloat(nerdamer(document.getElementsByName("min_x")[0].value).evaluate().text());
+			var max_x = parseFloat(nerdamer(document.getElementsByName("max_x")[0].value).evaluate().text());
+					
+			var min_y = 0;
+			var max_y = parseFloat(nerdamer(document.getElementsByName("max_y")[0].value).evaluate().text());
+			
+			// Check that we can make an all positive box out of this thing
+			if(min_x < 0 || max_x < min_x || max_y < 0){
+				alert("Invalid box given, arguments must form a box with no negative edges");
+				return;
+			}
+			
+			if(parsed.variables().length <= 1){
+				var variable = null;
+				// only set this variable if 
+				if(parsed.variables().length == 1){
+					variable = parsed.variables()[0];
+				}
+				drawFunction(parsed, min_x, max_x, min_y, max_y, variable);
+				var iterations = document.getElementsByName("iterations")[0].value;
+				/* Generate (x, y), and run x thru the function, and compare if f(x) < y */
+				var inside_count = 0;
+				for(var i = 0; i < iterations; i++){						
+					// TODO: Check if mins and maxs are positive
+					var xrange = max_x - min_x;
+					var yrange = max_y - min_y;
+					var x1 = (Math.random() * xrange) + min_x;
+					var y1 = (Math.random() * yrange) + min_y;
+					var input = {};
+					input[variable] = x1;
+					var y2 = nerdamer(eq, input).evaluate();
+					if(y2 < 0)
+					{
+						alert("This function goes negative, currently unimplemented");
+					}
+					else{
+						if(y2.text() > y1)
+						{
+							inside_count++;
+							drawPoint(x1, y1, min_x, max_x, min_y, max_y, true);
+						}
+						else{
+							drawPoint(x1, y1, min_x, max_x, min_y, max_y, false);
+						}
+					}
+				}
+				var area = (max_x - min_x) * (max_y - min_y);
+				console.log("AREA:"+area);
+				console.log(inside_count);
+				var percentage = inside_count/iterations;
+				console.log("PERCENTAGE:"+percentage);
+				var estimate = percentage * area;
+				console.log("ESTIMATE ="+estimate);
+				document.getElementById("estimates").innerHTML = estimate;
+			}
+			else{
+				alert("Invalid function, functions must be of at most 1 variable");
+			}
+			
+		}
+		
+		function drawFunction(func, min_x, max_x, min_y, max_y, variable){
+			var canvas = document.getElementById("drawing");
+			var context = canvas.getContext('2d');
+			var tag_height = canvas.height;
+			var tag_width = canvas.width;
+			context.fillStyle="white";
+			context.fillRect(0,0, tag_width, tag_height);
+			var height = tag_height/(max_y - min_y);
+			var width = tag_width/(max_x - min_x);
+			
+			context.beginPath();
+			var input = {};
+			if(variable != null){
+				input[variable] = min_x;
+			}
+			context.moveTo(0, (tag_height - func.evaluate(input) * height));
+			// 5000 chosen arbitrarily as enough to reasonably draw the function
+			var iterations = 5000;
+			for(var i = 0; i < iterations; i++){
+				var input = {};
+				var current_x = (min_x + (max_x * i/iterations));
+				input[variable] = current_x;
+				var result = func.evaluate(input);
+				
+				var canvas_x = (current_x - min_x) * width;
+				context.lineTo(canvas_x, tag_height - result * height); 
+			}
+			context.lineWidth = 2;
+			context.strokeStyle = "blue";
+			context.stroke();
+			
+		}
+		
+		function drawPoint(x, y, min_x, max_x, min_y, max_y, inside){
+			var canvas = document.getElementById("drawing");
+			var context = canvas.getContext('2d');
+			var tag_height = canvas.height;
+			var tag_width = canvas.width;
+			
+			var height = tag_height/(max_y - min_y);
+			var width = tag_width/(max_x - min_x);
+			context.fillStyle = "red";
+			if(inside){
+				context.fillStyle = "green";
+			}
+			context.fillRect((x-min_x) * width, tag_height - (y) * height, 2, 2);
+			
+		}
+		</script>
 	</head>
 	<body>
 		<h1>Monte Carlo Method</h1>
-		<p>About the Method</p>
+
+		<h2>Background</h2>
+		<p>Monte Carlo methods are a class of statistical tools statisticians, economists, financial analysts, etc... use in forecasting events or approximating values. More specifically, Monte Carlo methods actually refer to a class of processes: ranging from financial predictions to estimating integrals. </p>
+
+		<p>The first instance of a Monte Carlo method is dated in the eighteenth century. Georges Louis LeClerc who was a French scientist. Specifically, LeClerc proved that if given a lined background and a needle the length of the distance between the lines, then the probability of the needle intersecting a line when randomly tossed onto the background is 2/π. Get this, he literally tested this by tossing baguettes over his shoulder onto a tiled floor. <a href="https://mste.illinois.edu/activity/buffon/">Here</a> is a site to visit so you can do a very similar needle simulation! </p>
+
+		<p>Later, in the late nineteenth and early twentieth centuries, Monte Carlo simulations started being used to study problems that are considered intractable (take a looooooooooooooooooooooong time to compute): for example, galaxy formation modeling. Early simulations dealt with previously understood deterministic problems. Modern simulation now inverts the process, treating deterministic problems by first finding a probabilistic analog and solving the problem probabilistically. </p>
+
+		<p>The modern form of Monte Carlo simulations were first developed and used during the Manhattan Project. Specifically, John von Neumann and Stanislaw Ulam suggested Monte Carlo simulations for investigating properties of neutron travel through radiation shielding and actually gave Monte Carlo simulations their name “Monte Carlo.” </p>
+
+		<h2>Concept of Our Simulation</h2>
+		<p>Our simulator is implementing Example 2.2 from page 42 of our probability book. Meaning, essentially what we do is trap portions of the function inside of a box, then randomly select points from within the box see if they falls below or above the function. This is done by selecting a point (x,y) along two intervals (the range of x-values for the box and the range of y-values for the box). We select an x-value from the x-interval and we select a value from the y-interval, then we evaluate the function, f, at the randomly selected x and see if f(x) is less than or equal to the randomly selected y-value. We then iterate this as many times as we’d like (in theory we’d use an infinite amount of points) while keeping track of the number of points that fell below or on the function. After our set amount of iterations, we divide the number of points that fell below or on the function by the number of iterations, thus giving us the probability of falling under the function in our given area, which is the area of the function, thus giving us an approximate value of our integral! You may also notice that the expectation of a function is found by calculating an integral and, in our case, on an interval on our function, thus giving us the area under the function within our interval. Give it a try with the simulator!!! </p>
+
 		<h2>The Simulation</h2>
-		<div><canvas width="500" height="250"></canvas></div>
+		<div><canvas id="drawing" width="500" height="250" style="border:1px solid black"></canvas></div>
 		<div id="inputs">
 			<label>Equation:
-				<input type="text" name="equation"/>
+				<input type="text" name="equation"/>				
 			</label>
-			<input type="button" name="run_sim" value="Run Simulation"/>
+			<label>Iterations
+				<input type="text" name="iterations"/>
+			</label>
+			<br />
+			<label>Min X:
+				<input type="text" name="min_x"/>
+			</label>
+			<label>Max X:
+				<input type="text" name="max_x"/>
+			</label>
+			<br />
+			<label>Max Y:
+				<input type="text" name="max_y"/>
+			</label>			
+			<input type="button" name="run_sim" value="Run Simulation" onclick="montecarlo()"/>
+			<br />
+			<div id="estimates"></div>
+
+			<div id="errors"></div>
 		</div>
 	</body>
 </html>
+	
